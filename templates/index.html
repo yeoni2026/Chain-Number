@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chain Number</title>
+    <!-- static 폴더에서 CSS 불러오기 -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <!-- [1] 시작 전 화면 -->
+        <div id="start-screen">
+            <h1 style="font-size: 2.8rem; color: #1e293b; margin-bottom: 10px;">Chain Number</h1>
+            <p style="font-size: 1.1rem; color: #475569; margin-bottom: 30px;">
+                입력한 숫자만큼 건너뛰어 정답이 결정되는 규칙 연쇄 게임
+            </p>
+            
+            <!-- 플레이 버튼 -->
+            <button id="play-btn" onclick="startGame()">플레이</button>
+            
+            <!-- [추가] 플레이 버튼 아래 랭킹 보기 버튼 -->
+            <div style="margin-top: 10px;">
+                <button id="view-ranking-btn" onclick="openRankingModal()">🏆 랭킹 보기</button>
+            </div>
+        </div>
+
+        <!-- [추가] 화면 중앙에 뜰 랭킹 팝업창 (모달) -->
+        <div id="ranking-modal" class="modal-overlay hidden" onclick="closeRankingModal(event)">
+            <div class="modal-content" onclick="event.stopPropagation()">
+                <h3 style="margin-top: 0; margin-bottom: 15px; color: #1e293b; font-size: 1.2rem; border-bottom: 2px solid #f1f5f9; padding-bottom: 8px;">
+                    🏆 명예의 전당 (Top 5)
+                </h3>
+                <div id="ranking-list" style="font-size: 0.95rem; color: #475569; min-height: 100px;">
+                    로딩 중...
+                </div>
+                <button id="close-modal-btn" onclick="closeRankingModal(null)">닫기</button>
+            </div>
+        </div>
+        <!-- [2] 플레이 후 화면 -->
+        <div id="game-screen" class="hidden">
+            <p id="result-message" style="margin-top: 15px; min-height: 24px;"></p>
+            <div id="timer-ui" class="timer-container hidden">
+                <div id="timer-bar" class="timer-bar"></div>
+            </div>
+            <form id="game-form" onsubmit="handleSubmit(event)">
+                <input type="number" id="user-input" autofocus placeholder="0" required>
+            </form>
+            
+            <!-- 버튼 영역 -->
+            <div style="margin-top: 15px;">
+                <button id="restart-btn" class="hidden" onclick="startGame()">다시 시작하기</button>
+                <button id="home-btn" class="hidden" onclick="goHome()">홈으로</button>
+            </div>
+    
+            <p id="sub-guide" style="margin-top: 15px; color: #666;">숫자를 입력하고 Enter를 누르세요</p>
+        </div>
+    </div>
+    
+    <!-- static 폴더에서 JS 불러오기 (반드시 body 맨 아래에 배치) -->
+    <script src="{{ url_for('static', filename='game.js') }}"></script>
+</body>
+</html>

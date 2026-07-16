@@ -1,0 +1,212 @@
+body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    background-color: #f4f4f9;
+}
+.container {
+    text-align: center;
+}
+.hidden {
+    display: none !important;
+}
+#start-screen h1 {
+    font-size: 2.5rem;
+    margin-bottom: 20px;
+}
+#play-btn {
+    font-size: 1.5rem;
+    padding: 10px 50px;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    background-color: #28a745;
+    color: white;
+    transition: 0.2s;
+}
+#play-btn:hover {
+    background-color: #218838;
+}
+
+#game-screen input, .number-card {
+    box-sizing: border-box;
+    width: 270px;
+    height: 110px;
+    font-size: 4rem;
+    font-weight: bold;
+    text-align: center;
+    border-radius: 15px;
+    margin: 15px auto;
+    display: block;
+}
+
+#game-screen input {
+    border: 3px solid #007bff;
+    background-color: #ffffff;
+    outline: none;
+}
+
+.number-card {
+    line-height: 104px;
+    color: #3e3e3e;
+    background-color: #f8fafc;
+    border: 3px solid #e2e8f0; 
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    transition: all 0.2s ease;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+input[type=number] {
+    -moz-appearance: textfield;
+}
+
+#restart-btn, #home-btn {
+    font-size: 1.2rem;
+    padding: 10px 25px;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    color: white;
+    transition: 0.2s;
+    margin: 0 5px;
+    display: inline-block;
+}
+
+#restart-btn {
+    background-color: #dc3545;
+}
+#restart-btn:hover {
+    background-color: #bd2130;
+}
+
+#home-btn {
+    background-color: #6c757d;
+}
+#home-btn:hover {
+    background-color: #5a6268;
+}
+
+.card-wrong {
+    display: inline-block;
+    box-sizing: border-box;
+    width: 120px;
+    height: 90px;
+    line-height: 84px;
+    font-size: 3rem;
+    font-weight: bold;
+    color: #dc2626;
+    background-color: #fef2f2;
+    border: 3px solid #fca5a5;
+    border-radius: 12px;
+    text-align: center;
+    box-shadow: 0 4px 6px -1px rgba(220, 38, 38, 0.1);
+}
+
+.card-correct {
+    display: inline-block;
+    box-sizing: border-box;
+    width: 120px;
+    height: 90px;
+    line-height: 84px;
+    font-size: 3rem;
+    font-weight: bold;
+    color: #16a34a;
+    background-color: #f0fdf4;
+    border: 3px solid #86efac;
+    border-radius: 12px;
+    text-align: center;
+    box-shadow: 0 4px 6px -1px rgba(22, 163, 74, 0.1);
+}
+/* 타이머 컨테이너와 게이지 바 */
+.timer-container {
+    width: 270px;
+    height: 6px;
+    background-color: #e2e8f0;
+    border-radius: 3px;
+    margin: 10px auto;
+    overflow: hidden;
+}
+.timer-bar {
+    width: 100%;
+    height: 100%;
+    background-color: #ef4444; /* 빨간색 게이지 */
+    transition: width 0.1s linear;
+}
+/* 랭킹 보기 버튼 스타일 */
+#view-ranking-btn {
+    font-size: 1rem;
+    padding: 8px 30px;
+    background-color: transparent;
+    color: #64748b;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+#view-ranking-btn:hover {
+    background-color: #f1f5f9;
+    color: #1e293b;
+    border-color: #94a3b8;
+}
+
+/* 팝업 오버레이 (배경 어둡게) */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(15, 23, 42, 0.6); /* 반투명 어두운 배경 */
+    backdrop-filter: blur(4px); /* 배경 살짝 흐리게 처리 */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+/* 팝업 상자 스타일 */
+.modal-content {
+    background: #ffffff;
+    width: 300px;
+    padding: 24px;
+    border-radius: 16px;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    text-align: left;
+    animation: fadeIn 0.25s ease-out;
+}
+
+/* 팝업 내 닫기 버튼 */
+#close-modal-btn {
+    width: 100%;
+    margin-top: 20px;
+    padding: 10px;
+    background-color: #1e293b;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.2s;
+}
+#close-modal-btn:hover {
+    background-color: #0f172a;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
