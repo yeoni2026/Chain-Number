@@ -1,6 +1,6 @@
 let timerInterval = null;
 let timerTimeout = null;
-const LIMIT_TIME = 7; // 10초 제한
+const LIMIT_TIME = 8; // 10초 제한
 
 function startTimer() {
     stopTimer(); // 기존 작동하던 타이머가 있다면 초기화

@@ -90,11 +90,10 @@ def play():
         candidates = [i for i in [2, 3, 4, 5] if i != last_num]
 
         #순환족보 방지
-        if len(manager.num_list) == 1:
-            first_num = manager.num_list[0]
-            if first_num == 4 and 2 in candidates:
+        if manager.num_list:
+            if last_num == 4 and 2 in candidates:
                 candidates.remove(2)
-            elif first_num == 2 and 4 in candidates:
+            elif last_num == 2 and 4 in candidates:
                 candidates.remove(4)
 
         next_rand = random.choice(candidates)
