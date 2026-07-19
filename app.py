@@ -4,7 +4,7 @@ from logic import NumberManager
 import os
 import json
 from flask_sqlalchemy import SQLAlchemy
-from datetime import datetime
+from datetime import datetime, timedelta
 
 app = Flask(__name__)
 
@@ -25,6 +25,7 @@ class GameHistory(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
 with app.app_context():
+    # db.drop_all()
     db.create_all()  # 👈 다시 깨끗한 새 테이블을 만듭니다.
 
 manager = NumberManager()
@@ -112,11 +113,13 @@ def get_ranking():
         
         ranking_list = []
         for index, record in enumerate(top_records):
+
+            local_time = record.created_at + timedelta(hours=9)
             ranking_list.append({
                 "rank": index + 1,
                 "score": record.score,
                 # 날짜를 '07-16 13:42' 같은 읽기 쉬운 포맷으로 변경
-                "date": record.created_at.strftime('%m-%d %H:%M') 
+                "date": local_time.strftime('%m-%d %H:%M') 
             })
         return jsonify({"status": "success", "ranking": ranking_list})
     except Exception as e:
