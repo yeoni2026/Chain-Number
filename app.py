@@ -25,7 +25,6 @@ class GameHistory(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
 with app.app_context():
-    db.drop_all()   # 👈 기존 33점짜리 데이터와 테이블을 싹 밀어버립니다.
     db.create_all()  # 👈 다시 깨끗한 새 테이블을 만듭니다.
 
 manager = NumberManager()
