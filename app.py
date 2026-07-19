@@ -24,9 +24,9 @@ class GameHistory(db.Model):
     history = db.Column(db.Text, nullable=False)  # "[3, 2, 4...]" 형태로 저장
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
-# 앱 실행 시 자동으로 테이블 생성 (로컬 game.db 파일 자동 생성됨)
 with app.app_context():
-    db.create_all()
+    db.drop_all()   # 👈 기존 33점짜리 데이터와 테이블을 싹 밀어버립니다.
+    db.create_all()  # 👈 다시 깨끗한 새 테이블을 만듭니다.
 
 manager = NumberManager()
 
