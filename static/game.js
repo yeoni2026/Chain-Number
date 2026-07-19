@@ -159,6 +159,11 @@ function startGame() {
     document.getElementById('home-btn').classList.add('hidden');
     document.getElementById('sub-guide').classList.remove('hidden');
 
+    const resultElement = document.getElementById('result-message');
+    if (resultElement) {
+        resultElement.innerHTML = '';
+    }
+    
     fetch('/start', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' }

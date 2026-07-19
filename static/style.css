@@ -6,9 +6,24 @@ body {
     height: 100vh;
     margin: 0;
     background-color: #f4f4f9;
+    
+    /* 📱 모바일 스크롤 발생을 원천 차단 */
+    overflow: hidden; 
 }
+
 .container {
     text-align: center;
+    
+    /* 📐 가로/세로 최대 크기 제한 */
+    width: 100%;
+    max-width: 500px;  /* 👈 카드가 보기 좋게 정렬되는 적당한 가로폭 */
+    height: 100%;
+    max-height: 800px; /* 👈 일반적인 스마트폰 화면 높이에 맞춤 */
+    
+    /* 📦 박스 크기 계산 방식 고정 및 스크롤 방지 */
+    box-sizing: border-box;
+    overflow: hidden; 
+
 }
 .hidden {
     display: none !important;
