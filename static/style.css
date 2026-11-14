@@ -38,9 +38,14 @@ body {
     font-size: 2.5rem;
     margin-bottom: 20px;
 }
+#start-screen {
+    width: min(100%, 400px);
+    box-sizing: border-box;
+    padding: 0 16px;
+}
 #play-btn {
     font-size: 1.5rem;
-    padding: 10px 50px;
+    padding: 12px 20px;
     cursor: pointer;
     border: none;
     border-radius: 5px;
@@ -50,6 +55,36 @@ body {
 }
 #play-btn:hover {
     background-color: #218838;
+}
+
+.start-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: min(100%, 360px);
+    margin: 0 auto;
+}
+
+.start-actions button {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+#rules-btn {
+    font-size: 1rem;
+    padding: 10px 20px;
+    background-color: #ffffff;
+    color: #475569;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+#rules-btn:hover {
+    background-color: #f1f5f9;
+    color: #1e293b;
+    border-color: #94a3b8;
 }
 
 #game-screen input, .number-card {
@@ -163,7 +198,7 @@ input[type=number] {
 /* 랭킹 보기 버튼 스타일 */
 #view-ranking-btn {
     font-size: 1rem;
-    padding: 8px 30px;
+    padding: 10px 20px;
     background-color: transparent;
     color: #64748b;
     border: 1px solid #cbd5e1;
@@ -175,6 +210,131 @@ input[type=number] {
     background-color: #f1f5f9;
     color: #1e293b;
     border-color: #94a3b8;
+}
+
+.modal-content.rules-content {
+    box-sizing: border-box;
+    width: min(360px, calc(100vw - 32px));
+    max-height: 76.5vh;
+    overflow-y: auto;
+    line-height: 1.55;
+}
+
+.rules-intro {
+    margin: 0 0 14px;
+    color: #475569;
+}
+
+.rules-section {
+    margin-top: 12px;
+    padding: 12px;
+    border-radius: 8px;
+    background: #f8fafc;
+}
+
+.rules-section-title {
+    margin-bottom: 9px;
+    color: #334155;
+    font-size: 0.88rem;
+    font-weight: 700;
+}
+
+.rules-card-row {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 7px;
+}
+
+.rules-card-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+
+.rules-card-step > span,
+.rules-collision-card > span {
+    color: #64748b;
+    font-size: 0.7rem;
+    white-space: nowrap;
+}
+
+.rules-number-card {
+    display: grid;
+    place-items: center;
+    width: 100%;
+    height: 48px;
+    border-radius: 7px;
+    background: #e2e8f0;
+    color: #1e293b;
+    font-size: 1.45rem;
+    font-weight: 800;
+}
+
+.rules-number-card.is-question {
+    border: 2px dashed #93c5fd;
+    background: #eff6ff;
+    color: #2563eb;
+    box-sizing: border-box;
+}
+
+.rules-caption {
+    margin: 9px 0 0;
+    color: #475569;
+    font-size: 0.8rem;
+    line-height: 1.45;
+}
+
+.rules-collision-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+}
+
+.rules-collision-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 54px;
+    height: 60px;
+    border-radius: 7px;
+    background: #e2e8f0;
+}
+
+.rules-collision-card strong {
+    color: #1e293b;
+    font-size: 1.35rem;
+}
+
+.rules-collision-card.is-answer {
+    background: #dcfce7;
+}
+
+.rules-collision-card.is-answer strong {
+    color: #15803d;
+}
+
+.rules-operator {
+    color: #64748b;
+    font-size: 0.9rem;
+    font-weight: 700;
+}
+
+.rules-content p {
+    max-width: 100%;
+}
+
+#close-rules-btn {
+    width: 100%;
+    margin-top: 16px;
+    padding: 9px;
+    border: 0;
+    border-radius: 6px;
+    background: #1e293b;
+    color: #fff;
+    cursor: pointer;
 }
 
 /* 팝업 오버레이 (배경 어둡게) */
@@ -196,18 +356,40 @@ input[type=number] {
 .modal-content {
     background: #ffffff;
     width: 300px;
-    padding: 24px;
+    padding: 20px;
     border-radius: 16px;
     box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
     text-align: left;
     animation: fadeIn 0.25s ease-out;
 }
 
+#ranking-list {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(148, 163, 184, 0.28) transparent;
+}
+
+#ranking-list::-webkit-scrollbar {
+    width: 5px;
+}
+
+#ranking-list::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+#ranking-list::-webkit-scrollbar-thumb {
+    background: rgba(148, 163, 184, 0.22);
+    border-radius: 999px;
+}
+
+#ranking-list:hover::-webkit-scrollbar-thumb {
+    background: rgba(100, 116, 139, 0.42);
+}
+
 /* 팝업 내 닫기 버튼 */
 #close-modal-btn {
     width: 100%;
-    margin-top: 20px;
-    padding: 10px;
+    margin-top: 16px;
+    padding: 8px;
     background-color: #1e293b;
     color: white;
     border: none;

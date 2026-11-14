@@ -13,25 +13,52 @@
         <div id="start-screen">
             <h1 style="font-size: 2.8rem; color: #1e293b; margin-bottom: 10px;">Chain Number</h1>
             <p style="font-size: 1.1rem; color: #475569; margin-bottom: 30px;">
-                입력한 숫자만큼 건너뛰어 정답이 결정되는 규칙 연쇄 게임
+                숫자가 가리키는 차례에 맞춰 답을 이어가세요.
             </p>
             
-            <!-- 플레이 버튼 -->
-            <button id="play-btn" onclick="startGame()">플레이</button>
-            
-            <!-- [추가] 플레이 버튼 아래 랭킹 보기 버튼 -->
-            <div style="margin-top: 10px;">
+            <div class="start-actions">
+                <button id="play-btn" onclick="startGame()">플레이</button>
+                <button id="rules-btn" onclick="openRulesModal()">📖 규칙 보기</button>
                 <button id="view-ranking-btn" onclick="openRankingModal()">🏆 랭킹 보기</button>
+            </div>
+        </div>
+
+        <div id="rules-modal" class="modal-overlay hidden" onclick="closeRulesModal(event)">
+            <div class="modal-content rules-content" onclick="event.stopPropagation()">
+                <h3 style="margin-top: 0; margin-bottom: 14px; color: #1e293b; font-size: 1.2rem; border-bottom: 2px solid #f1f5f9; padding-bottom: 8px;">📖 게임 규칙</h3>
+                <p class="rules-intro">숫자가 가리키는 차례에 그 숫자를 입력해요.</p>
+                <section class="rules-section">
+                    <div class="rules-section-title">숫자가 나온 순서</div>
+                    <div class="rules-card-row" aria-label="첫 번째 3, 두 번째 4, 세 번째 2, 네 번째 입력 차례">
+                        <div class="rules-card-step"><span>1번째</span><div class="rules-number-card">3</div></div>
+                        <div class="rules-card-step"><span>2번째</span><div class="rules-number-card">4</div></div>
+                        <div class="rules-card-step"><span>3번째</span><div class="rules-number-card">2</div></div>
+                        <div class="rules-card-step"><span>4번째</span><div class="rules-number-card is-question">?</div></div>
+                    </div>
+                    <p class="rules-caption">1번째의 3이 세 차례 뒤를 가리켜요. <strong>4번째에 3</strong>을 입력! 이어서 3번째의 2가 가리키는 <strong>5번째에는 2</strong>를 입력해요.</p>
+                </section>
+                <section class="rules-section">
+                    <div class="rules-section-title">같은 차례를 가리키면 더해요</div>
+                    <div class="rules-collision-row" aria-label="첫 번째의 3 더하기 두 번째의 2는 네 번째에 5">
+                        <div class="rules-collision-card"><span>1번째</span><strong>3</strong></div>
+                        <span class="rules-operator">+</span>
+                        <div class="rules-collision-card"><span>2번째</span><strong>2</strong></div>
+                        <span class="rules-operator">→</span>
+                        <div class="rules-collision-card is-answer"><span>4번째</span><strong>5</strong></div>
+                    </div>
+                    <p class="rules-caption">1번째의 3과 2번째의 2가 모두 4번째를 가리켜서 <strong>3 + 2 = 5</strong>를 입력해요.</p>
+                </section>
+                <button id="close-rules-btn" onclick="closeRulesModal(null)">확인</button>
             </div>
         </div>
 
         <!-- [추가] 화면 중앙에 뜰 랭킹 팝업창 (모달) -->
         <div id="ranking-modal" class="modal-overlay hidden" onclick="closeRankingModal(event)">
             <div class="modal-content" onclick="event.stopPropagation()">
-                <h3 style="margin-top: 0; margin-bottom: 15px; color: #1e293b; font-size: 1.2rem; border-bottom: 2px solid #f1f5f9; padding-bottom: 8px;">
-                    🏆 명예의 전당 (Top 5)
+                <h3 style="margin-top: 0; margin-bottom: 12px; color: #1e293b; font-size: 1.2rem; border-bottom: 2px solid #f1f5f9; padding-bottom: 7px;">
+                    🏆 전체 기록 랭킹
                 </h3>
-                <div id="ranking-list" style="font-size: 0.95rem; color: #475569; min-height: 100px;">
+                <div id="ranking-list" style="font-size: 0.95rem; color: #475569; min-height: 80px; max-height: 44vh; overflow-y: auto; padding-right: 4px;">
                     로딩 중...
                 </div>
                 <button id="close-modal-btn" onclick="closeRankingModal(null)">닫기</button>

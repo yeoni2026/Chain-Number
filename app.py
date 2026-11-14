@@ -1,10 +1,12 @@
 from flask import Flask, render_template, request, jsonify
 import random
+import uuid
 from logic import NumberManager
 import os
 import json
 from flask_sqlalchemy import SQLAlchemy
-from datetime import datetime, timedelta
+from datetime import datetime
+from sqlalchemy import func
 
 app = Flask(__name__)
 
@@ -24,11 +26,13 @@ class GameHistory(db.Model):
     history = db.Column(db.Text, nullable=False)  # "[3, 2, 4...]" 형태로 저장
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
+class GameSession(db.Model):
+    id = db.Column(db.String(36), primary_key=True)
+    history = db.Column(db.Text, nullable=False, default='[]')
+
 with app.app_context():
     # db.drop_all()
     db.create_all()  # 👈 다시 깨끗한 새 테이블을 만듭니다.
-
-manager = NumberManager()
 
 @app.route('/')
 def index():
@@ -36,10 +40,14 @@ def index():
 
 @app.route('/start', methods=['POST'])
 def start_game():
-    manager.reset()
+    game_id = str(uuid.uuid4())
+    game_session = GameSession(id=game_id, history='[]')
+    db.session.add(game_session)
+    db.session.commit()
     first_rand = random.randint(2, 5)
     return jsonify({
         "status": "success",
+        "game_id": game_id,
         "next_action": "system_random",
         "random_num": first_rand,
         "turn_index": 1 # 👈 첫 번째 숫자이므로 1
@@ -47,7 +55,14 @@ def start_game():
 
 @app.route('/play', methods=['POST'])
 def play():
-    data = request.get_json()
+    data = request.get_json(silent=True) or {}
+    game_id = data.get('game_id')
+    game_session = db.session.get(GameSession, game_id) if game_id else None
+    if game_session is None:
+        return jsonify({"status": "fail", "reason": "invalid_game"}), 400
+
+    manager = NumberManager()
+    manager.num_list = json.loads(game_session.history)
     user_number = data.get('user_input')
     
     verify = manager.is_correct(user_number)
@@ -60,30 +75,24 @@ def play():
             
             new_record = GameHistory(score=score_val, history=history_str)
             db.session.add(new_record)
+            db.session.delete(game_session)
             db.session.commit()
-            records_to_delete = GameHistory.query \
-                .order_by(GameHistory.score.desc()) \
-                .offset(5) \
-                .all()
-            
-            # 3. 6등 이하 데이터가 존재한다면 한 번에 삭제
-            if records_to_delete:
-                for record in records_to_delete:
-                    db.session.delete(record)
-                db.session.commit() # 변경사항 반영
-                
         except Exception as e:
             db.session.rollback()
             print("데이터 정리 중 에러 발생:", e)
 
         return jsonify({
             "status": "fail",
+            "game_id": game_id,
             "reason": verify.get("reason"),
             "history": manager.num_list,
             "correct_answer": verify.get("correct_answer"),
             "user_input": user_number,
             "score": len(manager.num_list)
         })
+    game_session.history = json.dumps(manager.num_list)
+    db.session.commit()
+
     next_rand = None
     if verify['next_action'] == 'system_random':
         last_num = manager.num_list[-1] if manager.num_list else None
@@ -98,6 +107,7 @@ def play():
         
     return jsonify({
         "status": "success",
+        "game_id": game_id,
         "next_action": verify['next_action'],
         "random_num": next_rand,
         "turn_index": len(manager.num_list) + 1 # 👈 다음 채워야 할 칸의 번호 (n번째)
@@ -108,20 +118,33 @@ def play():
 @app.route('/ranking', methods=['GET'])
 def get_ranking():
     try:
-        # score 기준 내림차순으로 상위 5개 기록 조회
-        top_records = GameHistory.query.order_by(GameHistory.score.desc()).limit(5).all()
+        # 같은 점수의 기록을 묶어 총 게임 수와 상위 비율을 계산
+        score_groups = db.session.query(
+            GameHistory.score,
+            func.count(GameHistory.id).label('achievement_count')
+        ).group_by(GameHistory.score) \
+         .order_by(GameHistory.score.desc()).all()
         
+        total_games = sum(group.achievement_count for group in score_groups)
         ranking_list = []
-        for index, record in enumerate(top_records):
-
-            local_time = record.created_at + timedelta(hours=9)
+        games_at_or_above = 0
+        for group in score_groups:
+            games_at_or_above += group.achievement_count
+            exact_top_percent = games_at_or_above * 100 / total_games
+            if exact_top_percent < 10:
+                top_percent = max(0.1, round(exact_top_percent, 1))
+            else:
+                top_percent = (games_at_or_above * 100 + total_games - 1) // total_games
             ranking_list.append({
-                "rank": index + 1,
-                "score": record.score,
-                # 날짜를 '07-16 13:42' 같은 읽기 쉬운 포맷으로 변경
-                "date": local_time.strftime('%m-%d %H:%M') 
+                "score": group.score,
+                "achievement_count": group.achievement_count,
+                "top_percent": top_percent
             })
-        return jsonify({"status": "success", "ranking": ranking_list})
+        return jsonify({
+            "status": "success",
+            "total_games": total_games,
+            "ranking": ranking_list
+        })
     except Exception as e:
         print("랭킹 로드 실패:", e)
         return jsonify({"status": "fail", "message": "랭킹을 불러올 수 없습니다."})

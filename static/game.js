@@ -1,5 +1,6 @@
 let timerInterval = null;
 let timerTimeout = null;
+let currentGameId = null;
 const LIMIT_TIME = 8; // 10초 제한
 
 function startTimer() {
@@ -42,7 +43,7 @@ function handleTimeOver() {
     fetch('/play', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ user_input: 0 }) // 시간 초과 시 오답 처리
+        body: JSON.stringify({ game_id: currentGameId, user_input: 0 }) // 시간 초과 시 오답 처리
     })
     .then(response => response.json())
     .then(data => {
@@ -140,7 +141,7 @@ function processNextTurn(data) {
             fetch('/play', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ user_input: data.random_num })
+                body: JSON.stringify({ game_id: data.game_id, user_input: data.random_num })
             })
             .then(response => response.json())
             .then(nextData => {
@@ -170,6 +171,7 @@ function startGame() {
     })
     .then(response => response.json())
     .then(data => {
+        currentGameId = data.game_id;
         processNextTurn(data);
     })
     .catch(error => console.error('Start error:', error));
@@ -184,7 +186,7 @@ function handleSubmit(event) {
     fetch('/play', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ user_input: value })
+        body: JSON.stringify({ game_id: currentGameId, user_input: value })
     })
     .then(response => response.json())
     .then(data => {
@@ -197,6 +199,17 @@ function handleSubmit(event) {
 function openRankingModal() {
     document.getElementById('ranking-modal').classList.remove('hidden');
     loadRanking(); // 열릴 때 실시간 데이터 로드
+}
+
+function openRulesModal() {
+    document.getElementById('rules-modal').classList.remove('hidden');
+}
+
+function closeRulesModal(event) {
+    if (event) {
+        event.stopPropagation();
+    }
+    document.getElementById('rules-modal').classList.add('hidden');
 }
 
 // [추가] 랭킹 모달 닫기 (배경을 클릭하거나 닫기 버튼을 누를 때 작동)
@@ -216,18 +229,21 @@ function loadRanking() {
         .then(response => response.json())
         .then(data => {
             if (data.status === 'success') {
+                let html = `<div style="padding: 8px 0 12px; color:#475569; font-size:0.9rem; border-bottom:1px solid #f1f5f9;">전체 누적 플레이 횟수 <strong style="color:#1e293b;">${Number(data.total_games).toLocaleString('ko-KR')}회</strong></div>`;
+
                 if (data.ranking.length === 0) {
-                    rankingListDiv.innerHTML = '<div style="text-align:center; color:#94a3b8; padding: 15px 0;">아직 기록이 없습니다. 첫 랭커가 되어보세요!</div>';
+                    rankingListDiv.innerHTML = html + '<div style="text-align:center; color:#94a3b8; padding: 15px 0;">아직 기록이 없습니다. 첫 랭커가 되어보세요!</div>';
                     return;
                 }
 
-                let html = '';
                 data.ranking.forEach(item => {
-                    const rankBadge = `${item.rank}등`;
                     html += `
-                        <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px dashed #f1f5f9;">
-                            <span style="font-weight: bold; color: #1e293b;">${rankBadge} <span style="margin-left: 8px; color:#2563eb;">${item.score}개</span></span>
-                            <span style="font-size: 0.85rem; color: #94a3b8;">${item.date}</span>
+                        <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 0; border-bottom: 1px dashed #f1f5f9;">
+                            <div style="display: flex; align-items: baseline; flex-wrap: wrap; gap: 10px;">
+                                <span style="font-size: 1.25rem; font-weight: 800; color:#2563eb;">${item.score}점</span>
+                                <span style="font-size: 0.82rem; color:#64748b;">누적 횟수 ${item.achievement_count}회</span>
+                            </div>
+                            <span style="white-space: nowrap; font-size: 0.9rem; font-weight: 600; color: #64748b;">상위 ${item.top_percent}%</span>
                         </div>
                     `;
                 });
