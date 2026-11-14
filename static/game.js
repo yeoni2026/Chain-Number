@@ -84,6 +84,7 @@ function processNextTurn(data) {
             <div style="font-size: 1.2rem; font-weight: bold; color: #1e293b; margin-bottom: 15px;">
                 최종 기록: <span style="color: #2563eb; font-size: 1.5rem;">${data.score || 0}</span>개 성공! 🎉
             </div>
+            ${data.top_percent !== null && data.top_percent !== undefined ? `<div class="result-percentile">전체 기록 중 <strong>상위 ${data.top_percent}%</strong></div>` : ''}
             ${comparisonHTML}
         `;
 

@@ -271,6 +271,20 @@ input[type=number] {
     text-align: center;
     box-shadow: 0 4px 6px -1px rgba(22, 163, 74, 0.1);
 }
+
+.result-percentile {
+    display: inline-block;
+    margin: -4px 0 10px;
+    padding: 6px 12px;
+    border-radius: 999px;
+    background: #eff6ff;
+    color: #475569;
+    font-size: 0.9rem;
+}
+
+.result-percentile strong {
+    color: #2563eb;
+}
 /* 타이머 컨테이너와 게이지 바 */
 .timer-container {
     width: 270px;

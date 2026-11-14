@@ -34,6 +34,17 @@ with app.app_context():
     # db.drop_all()
     db.create_all()  # 👈 다시 깨끗한 새 테이블을 만듭니다.
 
+def get_top_percent_for_score(score):
+    total_games = GameHistory.query.count()
+    if total_games == 0:
+        return None
+
+    games_at_or_above = GameHistory.query.filter(GameHistory.score >= score).count()
+    exact_top_percent = games_at_or_above * 100 / total_games
+    if exact_top_percent < 10:
+        return max(0.1, round(exact_top_percent, 1))
+    return (games_at_or_above * 100 + total_games - 1) // total_games
+
 @app.route('/')
 def index():
     return render_template(
@@ -89,6 +100,13 @@ def play():
             db.session.rollback()
             print("데이터 정리 중 에러 발생:", e)
 
+        try:
+            top_percent = get_top_percent_for_score(len(manager.num_list))
+        except Exception as e:
+            db.session.rollback()
+            print("기록 백분위 계산 실패:", e)
+            top_percent = None
+
         return jsonify({
             "status": "fail",
             "game_id": game_id,
@@ -96,7 +114,8 @@ def play():
             "history": manager.num_list,
             "correct_answer": verify.get("correct_answer"),
             "user_input": user_number,
-            "score": len(manager.num_list)
+            "score": len(manager.num_list),
+            "top_percent": top_percent
         })
     game_session.history = json.dumps(manager.num_list)
     db.session.commit()
