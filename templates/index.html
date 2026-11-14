@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chain Number</title>
+    {% if adsense_client_id %}
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client={{ adsense_client_id }}" crossorigin="anonymous"></script>
+    {% endif %}
     <!-- static 폴더에서 CSS 불러오기 -->
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
@@ -21,6 +24,7 @@
                 <button id="rules-btn" onclick="openRulesModal()">📖 규칙 보기</button>
                 <button id="view-ranking-btn" onclick="openRankingModal()">🏆 랭킹 보기</button>
             </div>
+            <a class="privacy-link" href="{{ url_for('privacy_policy') }}">개인정보 처리방침</a>
         </div>
 
         <div id="rules-modal" class="modal-overlay hidden" onclick="closeRulesModal(event)">
@@ -83,6 +87,20 @@
             <p id="sub-guide" style="margin-top: 15px; color: #666;">숫자를 입력하고 Enter를 누르세요</p>
         </div>
     </div>
+
+    {% if adsense_client_id and adsense_slot_id %}
+    <aside id="home-ad-slot" class="home-ad-slot" aria-label="Advertisement">
+        <ins class="adsbygoogle"
+             style="display:block; width:100%;"
+             data-ad-client="{{ adsense_client_id }}"
+             data-ad-slot="{{ adsense_slot_id }}"
+             data-ad-format="auto"
+             data-full-width-responsive="true"></ins>
+    </aside>
+    <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+    </script>
+    {% endif %}
     
     <!-- static 폴더에서 JS 불러오기 (반드시 body 맨 아래에 배치) -->
     <script src="{{ url_for('static', filename='game.js') }}"></script>

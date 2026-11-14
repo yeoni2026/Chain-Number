@@ -36,7 +36,15 @@ with app.app_context():
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    return render_template(
+        'index.html',
+        adsense_client_id=os.environ.get('ADSENSE_CLIENT_ID', '').strip(),
+        adsense_slot_id=os.environ.get('ADSENSE_SLOT_ID', '').strip()
+    )
+
+@app.route('/privacy')
+def privacy_policy():
+    return render_template('privacy.html')
 
 @app.route('/start', methods=['POST'])
 def start_game():

@@ -153,6 +153,7 @@ function processNextTurn(data) {
 }
 
 function startGame() {
+    document.getElementById('home-ad-slot')?.classList.add('hidden');
     document.getElementById('start-screen').classList.add('hidden');
     document.getElementById('game-screen').classList.remove('hidden');
     document.getElementById('game-form').classList.add('hidden'); 
@@ -262,6 +263,7 @@ function loadRanking() {
 // 2. 기존 goHome 함수 수정 (홈 화면으로 갈 때 랭킹 갱신)
 function goHome() {
     stopTimer();
+    document.getElementById('home-ad-slot')?.classList.remove('hidden');
     document.getElementById('start-screen').classList.remove('hidden');
     document.getElementById('game-screen').classList.add('hidden');
     document.getElementById('game-form').classList.add('hidden');
